@@ -121,18 +121,11 @@ def rotateLeft():
     while not isPossibleMove(None, activeblock, grid):
         activeblock.moveUp()
 
-
 def canClearLine(lineIndex):
     for i in range(10):
         if grid[lineIndex][i] == 0:
             return False
     return True
-
-def resetCurrentBlock(activeblock, grid):
-    addToGrid(activeblock, grid)
-    activeblock.makeInactive()
-    activeblock = blockGenerator.randomBlock()
-
 
 prevTime = time()
 
@@ -142,22 +135,41 @@ def softDrop():
 
 def hardDrop():
     global activeblock
-    i = 0
     while isPossibleMove("down", activeblock, grid):
         activeblock.moveDown()
-        print(i)
-        i += 1
     
     addToGrid(activeblock, grid)
     activeblock.makeInactive()
     activeblock = blockGenerator.randomBlock()
 
+def generateGhostPiece(parentBlock, ghostPiece=None, fillcolor="pink", edgeColor="black", edgeThickness="3"):
+    if ghostPiece != None:
+        ghostPiece.hideBlock()
+        del ghostPiece
 
+    ghostBlocks = []
+    for block in parentBlock.blocks:
+        ghostBlocks.append(block.clone())
+    
+    for block in ghostBlocks:
+        block.fillcolor(fillcolor)
+    
+    for block in ghostBlocks:
+        block.pencolor(edgeColor)
+    
+    ghostPiece = Block(parentBlock.x, parentBlock.y, cellWidth, fillcolor, edgeColor, edgeThickness, 0, 0, blocks=ghostBlocks)
+
+    while isPossibleMove("down", ghostPiece, grid):
+        ghostPiece.moveDown()
+    
+    return ghostPiece
+
+ghostPiece = generateGhostPiece(activeblock)   
 def main():
-    global activeblock, prevTime
+    global activeblock, prevTime, ghostPiece
     
     win.listen()
-    drawGrid("grey", "black", 3, 5)
+    drawGrid("grey", "black", 1, 5)
 
     while True:
         win.onkeypress(moveLeft, "Left")
@@ -166,14 +178,16 @@ def main():
         win.onkeypress(softDrop, "Down")
         win.onkeypress(hardDrop, "space")
 
+        ghostPiece = generateGhostPiece(activeblock, ghostPiece)
+
         if time() - prevTime > gravitySpeed:
             if activeblock.isInBoundary():
                 # checking for block-block collision
                 if not isPossibleMove("down", activeblock, grid):
-                    # resetCurrentBlock(activeblock, grid)
                     addToGrid(activeblock, grid)
                     activeblock.makeInactive()
                     activeblock = blockGenerator.randomBlock()
+                    ghostPiece = generateGhostPiece(activeblock, ghostPiece)
                     
                 activeblock.moveDown()
             else:
@@ -181,6 +195,7 @@ def main():
                 addToGrid(activeblock, grid)
                 activeblock.makeInactive()
                 activeblock = blockGenerator.randomBlock()
+                ghostPiece = generateGhostPiece(activeblock, ghostPiece)
             prevTime = time()
 
         win.update()

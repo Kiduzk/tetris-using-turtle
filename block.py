@@ -1,12 +1,15 @@
 from turtle import Turtle
 
 class Block:
-    def __init__(self, x, y, cellWidth, color, edgeColor, edgeThickness, relpivotX, relpivotY, active=True):
+    def __init__(self, x, y, cellWidth, color, edgeColor, edgeThickness, relpivotX, relpivotY, blocks=[], active=True):
         self.cellWidth = cellWidth
         self.x = x
         self.y = y
         self.active = active
-        self.blocks = []
+        if blocks != []:
+            self.blocks = blocks
+        else:
+            self.blocks = []
         self.edgeThickness = edgeThickness
         self.edgeColor = edgeColor
         self.color = color
@@ -104,4 +107,8 @@ class Block:
     def unhideBlock(self):
         for block in self.blocks:
             block.showturtle()
+    
+    def hideBlock(self):
+        for block in self.blocks:
+            block.hideturtle()
     
