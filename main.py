@@ -27,7 +27,7 @@ pieceEdgeColor = "black"
 pieceEdgeThickness = 3
 
 grid = [[0 for x in range(10)] for y in range(20)]
-blockGenerator = BlockGenerator(cellWidth / 2, cellWidth * 9.5, cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
+blockGenerator = BlockGenerator(cellWidth / 2, cellWidth * 7.5, cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
 activeblock = blockGenerator.randomBlock()
 
 gravitySpeed = 1
@@ -116,6 +116,12 @@ def moveRight():
     if isPossibleMove("right", activeblock, grid):
         activeblock.moveRight()
 
+def rotateLeft():
+    activeblock.rotateLeft()
+    while not isPossibleMove(None, activeblock, grid):
+        activeblock.moveUp()
+
+
 def canClearLine(lineIndex):
     for i in range(10):
         if grid[lineIndex][i] == 0:
@@ -156,7 +162,7 @@ def main():
     while True:
         win.onkeypress(moveLeft, "Left")
         win.onkeypress(moveRight, "Right")
-        win.onkeypress(activeblock.rotateLeft, "Up")
+        win.onkeypress(rotateLeft, "Up")
         win.onkeypress(softDrop, "Down")
         win.onkeypress(hardDrop, "space")
 

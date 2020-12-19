@@ -64,6 +64,12 @@ class Block:
             for block in self.blocks:
                 self.move(block, block.xcor() - self.cellWidth, block.ycor()) 
     
+    def moveUp(self):
+        if self.isActive():
+            self.pivotY += self.cellWidth
+            for block in self.blocks:
+                self.move(block, block.xcor(), block.ycor() + self.cellWidth)
+        
     def rotateLeft(self):
         outRight, outLeft, outDown = 0, 0, 0 # if the block is outside of boundary after rotation
         for block in self.blocks:
@@ -87,9 +93,6 @@ class Block:
         for _ in range(outDown):
             for block in self.blocks:
                 self.move(block, block.xcor(), block.ycor() + self.cellWidth)
-        
-
-        # avoiding blockcollision
 
     def rotateRight(self):
         for block in self.blocks:
