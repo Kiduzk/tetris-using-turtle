@@ -88,6 +88,9 @@ class Block:
             for block in self.blocks:
                 self.move(block, block.xcor(), block.ycor() + self.cellWidth)
         
+
+        # avoiding blockcollision
+
     def rotateRight(self):
         for block in self.blocks:
             blockX, blockY = block.xcor(), block.ycor()

@@ -30,7 +30,7 @@ grid = [[0 for x in range(10)] for y in range(20)]
 blockGenerator = BlockGenerator(cellWidth / 2, cellWidth * 9.5, cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
 activeblock = blockGenerator.randomBlock()
 
-gravitySpeed = 0.5
+gravitySpeed = .2
 
 def move(turtle, x, y):
     turtle.up()
@@ -72,6 +72,20 @@ def addToGrid(block, grid):
     for block in block.blocks:
         gridX, gridY = (block.xcor() + 4.5 * cellWidth) / cellWidth, (block.ycor() + 9.5 * cellWidth) / cellWidth
         grid[int(gridY)][int(gridX)] = block
+    
+    for row in range(19, -1, -1):
+        if canClearLine(row):
+            for block in grid[row]:
+                block.reset()
+                block.hideturtle()
+                del block
+
+            del grid[row]
+            grid.append([0 for i in range(10)])
+            for line in grid[row:]:
+                for block in line:
+                    if block != 0:
+                        move(block, block.xcor(), block.ycor() - cellWidth)
 
 def isPossibleMove(direction, block, grid):
     for block in block.blocks:
@@ -103,8 +117,8 @@ def moveRight():
         activeblock.moveRight()
 
 def canClearLine(lineIndex):
-    for _ in range(10):
-        if grid[lineIndex][lineIndex] == 0:
+    for i in range(10):
+        if grid[lineIndex][i] == 0:
             return False
     return True
 
