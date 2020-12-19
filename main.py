@@ -30,7 +30,7 @@ grid = [[0 for x in range(10)] for y in range(20)]
 blockGenerator = BlockGenerator(cellWidth / 2, cellWidth * 9.5, cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
 activeblock = blockGenerator.randomBlock()
 
-gravitySpeed = .2
+gravitySpeed = 1
 
 def move(turtle, x, y):
     turtle.up()
@@ -100,7 +100,7 @@ def isPossibleMove(direction, block, grid):
         elif direction == "right":
             gridX += 1
 
-        if gridX < 0 or gridX > 9:
+        if gridX < 0 or gridX > 9 or gridY > 19 or gridY < 0:
             return False
         
         if grid[gridY][gridX] != 0:
@@ -122,18 +122,43 @@ def canClearLine(lineIndex):
             return False
     return True
 
-def main():
+def resetCurrentBlock(activeblock, grid):
+    addToGrid(activeblock, grid)
+    activeblock.makeInactive()
+    activeblock = blockGenerator.randomBlock()
+
+
+prevTime = time()
+
+def softDrop():
+    global prevTime
+    prevTime -= gravitySpeed / 1.5
+
+def hardDrop():
     global activeblock
+    i = 0
+    while isPossibleMove("down", activeblock, grid):
+        activeblock.moveDown()
+        print(i)
+        i += 1
+    
+    addToGrid(activeblock, grid)
+    activeblock.makeInactive()
+    activeblock = blockGenerator.randomBlock()
+
+
+def main():
+    global activeblock, prevTime
     
     win.listen()
-    
     drawGrid("grey", "black", 3, 5)
-    prevTime = time()
 
     while True:
         win.onkeypress(moveLeft, "Left")
         win.onkeypress(moveRight, "Right")
         win.onkeypress(activeblock.rotateLeft, "Up")
+        win.onkeypress(softDrop, "Down")
+        win.onkeypress(hardDrop, "space")
 
         if time() - prevTime > gravitySpeed:
             if activeblock.isInBoundary():
@@ -144,7 +169,6 @@ def main():
                     activeblock.makeInactive()
                     activeblock = blockGenerator.randomBlock()
                     
-
                 activeblock.moveDown()
             else:
                 # adding inactive block to grid
