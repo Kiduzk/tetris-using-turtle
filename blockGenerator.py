@@ -28,7 +28,7 @@ class BlockGenerator:
         return self.currentBlocks[0]
 
     def randomBlock(self):
-        if len(self.currentBlocks) > 1:
+        if len(self.currentBlocks) > 2:
             randomBlock = self.currentBlocks[0]
 
             self.currentBlocks = self.currentBlocks[1:]

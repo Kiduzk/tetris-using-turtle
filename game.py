@@ -218,7 +218,7 @@ class Game:
                     
                 self.prevTime = time()
 
-            self.activeblock.redrawBlocks()
+                self.activeblock.redrawBlocks()
             self.win.update()
 
         self.win.mainloop()
