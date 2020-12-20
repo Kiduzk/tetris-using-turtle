@@ -5,6 +5,7 @@ turtle.tracer(0, 0)
 # changable variables
 
 win = turtle.Screen()
+win.setup(800, 700)
 gravitySpeed = 1
 cellWidth = 30
 pieceColors = {

@@ -8,7 +8,8 @@ class Game:
         self.grid = [[0 for x in range(10)] for y in range(20)]
         self.cellWidth = cellWidth
         self.blockGenerator = BlockGenerator(self.cellWidth / 2, self.cellWidth * 7.5, self.cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
-        # self.prevTime = time()
+        self.nextBlockClone = []
+        self.drawNextBlock()
         self.activeblock = self.blockGenerator.randomBlock()
         self.gravitySpeed = gravitySpeed
         self.pieceColors = pieceColors
@@ -23,44 +24,61 @@ class Game:
         self.ghostBorderThickness = ghostBorderThickness
         self.win = screen
         self.win.colormode(255)
-
+        
     def move(self, turtle, x, y):
         turtle.up()
         turtle.goto(x, y)
         turtle.down()
-
-    def drawGrid(self, gridColor, edgeColor, gridThickness, edgeThickness):
+    
+    def drawRect(self, x, y, width, height, color, thickness):
         t = Turtle()
+        t.pensize(thickness)
+        t.hideturtle()
+        self.move(t, x, y)
+        for i in range(4):
+            if i % 2:
+                t.fd(height)
+            else:
+                t.fd(width)
+            t.left(90)
+
+    def drawGrid(self, x, y, width, height, gridColor, edgeColor, gridThickness, edgeThickness):
+        t = Turtle()
+        height *= self.cellWidth
+        width *= self.cellWidth
+
+        self.move(t, x, y)
         t.hideturtle()
         t.pencolor(gridColor)
         t.pensize(gridThickness)
-        # X
+
         t.setheading(90)
-        for i in range(-5, 6):
-            if i == -5 or i == 5:
-                t.pencolor(edgeColor)
-                t.pensize(edgeThickness)
-
-            self.move(t, i * self.cellWidth,  - self.cellWidth * 10)
-            t.fd(self.cellWidth * 20)
-
-            if i == -5 or i == 5:
-                t.pencolor(gridColor)
-                t.pensize(gridThickness)
+        for i in range(x + self.cellWidth, x + width, self.cellWidth):
+            self.move(t, i, y)
+            t.fd(height)
         
-        # Y
         t.setheading(0)
-        for i in range(-10, 11):
-            if i == -10 or i == 10:
-                t.pencolor(edgeColor)
-                t.pensize(edgeThickness)
+        for i in range(y + self.cellWidth, y + height, self.cellWidth):
+            self.move(t, x, i)
+            t.fd(width)
 
-            self.move(t, -self.cellWidth * 5, i * self.cellWidth)
-            t.fd(self.cellWidth * 10)
+        # drawing the borders
+        self.drawRect(x, y, width, height, edgeColor, edgeThickness)
+        
+    def drawNextBlock(self):
+        if self.nextBlockClone != []:
+            for block in self.nextBlockClone:
+                block.hideturtle()
 
-            if i == -10 or i  == 10:
-                t.pencolor(gridColor)
-                t.pensize(gridThickness)
+        nextBlock = self.blockGenerator.getNextPiece()
+        nextBlockClone = []
+        for block in nextBlock.blocks:
+            clone = block.clone()
+            clone.showturtle()
+            self.move(clone, self.cellWidth * 7 + block.xcor(), block.ycor())
+            nextBlockClone.append(clone)
+        
+        self.nextBlockClone = nextBlockClone
 
     def addToGrid(self, block, grid):
         for block in block.blocks:
@@ -124,13 +142,14 @@ class Game:
     def softDrop(self):
         self.prevTime -= self.gravitySpeed / 1.5
 
-    def hardDrop(self, ):
+    def hardDrop(self):
         while self.isPossibleMove("down", self.activeblock, self.grid):
             self.activeblock.moveDown()
         
         self.addToGrid(self.activeblock, self.grid)
         self.activeblock.makeInactive()
         self.activeblock = self.blockGenerator.randomBlock()
+        self.drawNextBlock()
 
     def generateGhostPiece(self, parentBlock, ghostPiece=None):
         if ghostPiece != None:
@@ -161,7 +180,11 @@ class Game:
     def main(self):
         ghostPiece = self.generateGhostPiece(self.activeblock)
         self.win.listen()
-        self.drawGrid(self.gridColor, self.gridBorderColor, self.gridThickness, self.gridEdgeThickness)
+        gridX = self.cellWidth * -5
+        gridY = self.cellWidth * -10
+        gridWidth, gridHeight = 10, 20
+        self.drawGrid(gridX, gridY, gridWidth, gridHeight, self.gridColor, self.gridBorderColor, self.gridThickness, self.gridEdgeThickness)
+        self.drawGrid(gridX + gridWidth * self.cellWidth + self.cellWidth, gridY + gridHeight * self.cellWidth - self.cellWidth * 4, 4, 4, self.gridColor, self.gridBorderColor, self.gridThickness, self.gridEdgeThickness)
         self.prevTime = time()
 
         while True:
@@ -180,7 +203,9 @@ class Game:
                         self.addToGrid(self.activeblock, self.grid)
                         self.activeblock.makeInactive()
                         self.activeblock = self.blockGenerator.randomBlock()
+                        self.drawNextBlock()
                         ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
+                        
                         
                     self.activeblock.moveDown()
                 else:
@@ -188,6 +213,7 @@ class Game:
                     self.addToGrid(self.activeblock, self.grid)
                     self.activeblock.makeInactive()
                     self.activeblock = self.blockGenerator.randomBlock()
+                    self.drawNextBlock()
                     ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
                     
                 self.prevTime = time()

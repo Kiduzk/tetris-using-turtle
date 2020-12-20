@@ -9,6 +9,7 @@ class BlockGenerator:
         self.edgeColor = edgeColor
         self.edgeThickness = edgeThickness
         self.pieceColors = pieceColors
+        self.currentBlocks = []
         self.resetBlocks()
     
     def resetBlocks(self):
@@ -21,11 +22,16 @@ class BlockGenerator:
             self.Sblock(self.pieceColors["S"]),
             self.Tblock(self.pieceColors["T"]),
         ]
-        
+        random.shuffle(self.currentBlocks)
+    
+    def getNextPiece(self):
+        return self.currentBlocks[0]
+
     def randomBlock(self):
-        if len(self.currentBlocks) > 0:
-            randomBlock = random.choice(self.currentBlocks)
-            self.currentBlocks.remove(randomBlock)
+        if len(self.currentBlocks) > 1:
+            randomBlock = self.currentBlocks[0]
+
+            self.currentBlocks = self.currentBlocks[1:]
             randomBlock.unhideBlock()
             return randomBlock
         else:
