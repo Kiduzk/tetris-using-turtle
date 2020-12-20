@@ -142,7 +142,7 @@ def hardDrop():
     activeblock.makeInactive()
     activeblock = blockGenerator.randomBlock()
 
-def generateGhostPiece(parentBlock, ghostPiece=None, fillcolor="pink", edgeColor="black", edgeThickness="3"):
+def generateGhostPiece(parentBlock, ghostPiece=None, fillcolor="grey", edgeColor="black", edgeThickness=3):
     if ghostPiece != None:
         ghostPiece.hideBlock()
         del ghostPiece
@@ -153,14 +153,14 @@ def generateGhostPiece(parentBlock, ghostPiece=None, fillcolor="pink", edgeColor
     
     for block in ghostBlocks:
         block.fillcolor(fillcolor)
-    
-    for block in ghostBlocks:
         block.pencolor(edgeColor)
+        block.turtlesize(cellWidth / 20, cellWidth / 20, edgeThickness)
     
     ghostPiece = Block(parentBlock.x, parentBlock.y, cellWidth, fillcolor, edgeColor, edgeThickness, 0, 0, blocks=ghostBlocks)
 
     while isPossibleMove("down", ghostPiece, grid):
         ghostPiece.moveDown()
+    parentBlock.redrawBlocks()
     
     return ghostPiece
 
@@ -198,6 +198,7 @@ def main():
                 ghostPiece = generateGhostPiece(activeblock, ghostPiece)
             prevTime = time()
 
+        activeblock.redrawBlocks()
         win.update()
 
 main()

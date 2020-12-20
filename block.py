@@ -112,3 +112,11 @@ class Block:
         for block in self.blocks:
             block.hideturtle()
     
+    def redrawBlocks(self):
+        newBlocks = []
+        for block in self.blocks:
+            newBlocks.append(block.clone())
+            block.hideturtle()
+            del block
+        self.blocks = newBlocks
+        
