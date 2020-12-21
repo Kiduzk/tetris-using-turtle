@@ -1,5 +1,24 @@
 from turtle import Turtle
 
+# class Stamp:
+#     def __init__(self, cellWidth, turtlesize, shape, edgeColor, edgeThickness, fillcolor):
+#         self.turtlesize = turtlesize
+#         self.cellWidth = cellWidth
+#         self.shape = shape
+#         self.edgeColor = edgeColor
+#         self.edgeThickness = edgeThickness
+#         self.fillcolor = fillcolor
+#         stampTurtle = Turtle()
+#         stampTurtle.resizemode("user")
+#         stampTurtle.turtlesize(cellWidth / 20, cellWidth / 20, edgeThickness)
+#         stampTurtle.shape("square")
+#         stampTurtle.pencolor(edgeColor)
+#         stampTurtle.fillcolor(fillcolor)
+#         self.stampTurtle = stampTurtle
+    
+#     def stamp(self):
+#         pass
+
 class Block:
     def __init__(self, x, y, cellWidth, color, edgeColor, edgeThickness, relpivotX, relpivotY, blocks=[], active=True):
         self.cellWidth = cellWidth
