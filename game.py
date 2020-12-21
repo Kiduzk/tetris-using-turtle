@@ -9,7 +9,7 @@ class Game:
         self.cellWidth = cellWidth
         self.blockGenerator = BlockGenerator(self.cellWidth / 2, self.cellWidth * 7.5, self.cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
         self.nextBlockClone = []
-        self.drawNextBlock()
+        # self.drawNextBlock()
         self.activeblock = self.blockGenerator.randomBlock()
         self.gravitySpeed = gravitySpeed
         self.pieceColors = pieceColors
@@ -149,7 +149,7 @@ class Game:
         self.addToGrid(self.activeblock, self.grid)
         self.activeblock.makeInactive()
         self.activeblock = self.blockGenerator.randomBlock()
-        self.drawNextBlock()
+        # self.drawNextBlock()
 
     def generateGhostPiece(self, parentBlock, ghostPiece=None):
         if ghostPiece != None:
@@ -178,13 +178,13 @@ class Game:
         return ghostPiece
 
     def main(self):
-        ghostPiece = self.generateGhostPiece(self.activeblock)
+        # ghostPiece = self.generateGhostPiece(self.activeblock)
         self.win.listen()
         gridX = self.cellWidth * -5
         gridY = self.cellWidth * -10
         gridWidth, gridHeight = 10, 20
         self.drawGrid(gridX, gridY, gridWidth, gridHeight, self.gridColor, self.gridBorderColor, self.gridThickness, self.gridEdgeThickness)
-        self.drawGrid(gridX + gridWidth * self.cellWidth + self.cellWidth, gridY + gridHeight * self.cellWidth - self.cellWidth * 4, 4, 4, self.gridColor, self.gridBorderColor, self.gridThickness, self.gridEdgeThickness)
+        # self.drawGrid(gridX + gridWidth * self.cellWidth + self.cellWidth, gridY + gridHeight * self.cellWidth - self.cellWidth * 4, 4, 4, self.gridColor, self.gridBorderColor, self.gridThickness, self.gridEdgeThickness)
         self.prevTime = time()
 
         while True:
@@ -194,7 +194,7 @@ class Game:
             self.win.onkeypress(self.softDrop, "Down")
             self.win.onkeypress(self.hardDrop, "space")
 
-            ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
+            # ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
 
             if time() - self.prevTime > self.gravitySpeed:
                 if self.activeblock.isInBoundary():
@@ -203,8 +203,8 @@ class Game:
                         self.addToGrid(self.activeblock, self.grid)
                         self.activeblock.makeInactive()
                         self.activeblock = self.blockGenerator.randomBlock()
-                        self.drawNextBlock()
-                        ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
+                        # self.drawNextBlock()
+                        # ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
                         
                         
                     self.activeblock.moveDown()
@@ -213,8 +213,8 @@ class Game:
                     self.addToGrid(self.activeblock, self.grid)
                     self.activeblock.makeInactive()
                     self.activeblock = self.blockGenerator.randomBlock()
-                    self.drawNextBlock()
-                    ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
+                    # self.drawNextBlock()
+                    # ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
                     
                 self.prevTime = time()
 
