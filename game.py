@@ -138,6 +138,8 @@ class Game:
                 return False
             
             if grid[gridY][gridX] != 0:
+                if gridY >= 15:
+                    exit()
                 return False
         
         return True
