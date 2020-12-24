@@ -32,6 +32,10 @@ ghostColor = "black"
 ghostBorderColor = "black"
 ghostBorderThickness = 3
 
+#
+scoreFont = "Arial"
+scoreFontSize = 30
+
 game = Game(
     win, 
     gravitySpeed, 
@@ -45,6 +49,8 @@ game = Game(
     gridEdgeThickness,
     ghostColor, 
     ghostBorderColor, 
-    ghostBorderThickness
+    ghostBorderThickness,
+    scoreFont, 
+    scoreFontSize
 )
 game.main()

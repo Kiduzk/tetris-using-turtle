@@ -4,7 +4,7 @@ from blockGenerator import *
 from time import time
 
 class Game:
-    def __init__(self, screen, gravitySpeed, cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness, gridColor, gridBorderColor, gridThickness, gridEdgeThickness, ghostColor, ghostBorderColor, ghostBorderThickness):
+    def __init__(self, screen, gravitySpeed, cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness, gridColor, gridBorderColor, gridThickness, gridEdgeThickness, ghostColor, ghostBorderColor, ghostBorderThickness, scoreFont, scoreSize):
         self.grid = [[0 for x in range(10)] for y in range(20)]
         self.cellWidth = cellWidth
         self.blockGenerator = BlockGenerator(self.cellWidth / 2, self.cellWidth * 7.5, self.cellWidth, pieceColors, pieceEdgeColor, pieceEdgeThickness)
@@ -24,6 +24,16 @@ class Game:
         self.ghostBorderThickness = ghostBorderThickness
         self.win = screen
         self.win.colormode(255)
+        self.scoreFont = scoreFont
+        self.scoreSize = scoreSize
+        self.scoreTurtle = Turtle()
+        self.scoreTurtle.hideturtle()
+        self.move(self.scoreTurtle, self.cellWidth * 6, self.cellWidth * 6)
+        self.level = 0
+        self.score = 0
+        self.currentLines = 0
+        self.newLevel = False
+        self.updateScore(0)
         
     def move(self, turtle, x, y):
         turtle.up()
@@ -85,8 +95,10 @@ class Game:
             gridX, gridY = (block.xcor() + 4.5 * self.cellWidth) / self.cellWidth, (block.ycor() + 9.5 * self.cellWidth) / self.cellWidth
             grid[int(gridY)][int(gridX)] = block
         
+        lines = 0
         for row in range(19, -1, -1):
             if self.canClearLine(row):
+                lines += 1
                 for block in grid[row]:
                     block.reset()
                     block.hideturtle()
@@ -98,6 +110,16 @@ class Game:
                     for block in line:
                         if block != 0:
                             self.move(block, block.xcor(), block.ycor() - self.cellWidth)
+        
+        if lines == 1:
+            self.updateScore(40 * (self.level + 1))
+        elif lines == 2:
+            self.updateScore(100 * (self.level + 1))
+        elif lines == 3:
+            self.updateScore(300 * (self.level + 1))
+        elif lines == 4:
+            self.updateScore(1200 * (self.level + 1))
+        self.currentLines += lines
 
     def isPossibleMove(self, direction, block, grid):
         for block in block.blocks:
@@ -176,6 +198,16 @@ class Game:
         parentBlock.redrawBlocks()
  
         return ghostPiece
+    
+    def updateScore(self, score):
+        if self.currentLines >= 10:
+            self.level += 1
+            self.currentLines -= 10
+            self.newLevel = True
+
+        self.scoreTurtle.clear()
+        self.score += score
+        self.scoreTurtle.write("Score: " + str(self.score), font=(self.scoreFont, self.scoreSize, "normal"))
 
     def main(self):
         # ghostPiece = self.generateGhostPiece(self.activeblock)
@@ -195,7 +227,11 @@ class Game:
             self.win.onkeypress(self.hardDrop, "space")
 
             # ghostPiece = self.generateGhostPiece(self.activeblock, ghostPiece)
-
+            if self.newLevel:
+                self.gravitySpeed *= 0.75
+                print("speed changed", self.gravitySpeed)
+                self.newLevel = False
+                
             if time() - self.prevTime > self.gravitySpeed:
                 if self.activeblock.isInBoundary():
                     # checking for block-block collision
