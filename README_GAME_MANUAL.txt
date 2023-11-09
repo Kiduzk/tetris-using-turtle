@@ -1,5 +1,5 @@
-NOTE: GAME DOESNOT HAVE 
-
+- To run game open main.py
+- To change the visual colors you can open main.py and change the variable values
 
 commands:
 	up_arrow    : rotate_block
